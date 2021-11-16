@@ -1,11 +1,12 @@
 const express       = require('express');
 const session       = require('express-session');
-const hbs           = require('express-handlebars');
+const hbs           = require('express3-handlebars');
 const mongoose      = require('mongoose');
 const passport      = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const bcrypt        = require('bcrypt');
 const app           = express();
+const path          = require ('path');
 
 mongoose.connect("mongodb://localhost:27017/simple-login-system", {
     useNewUrlParser: true,
@@ -28,7 +29,7 @@ const user = mongoose.model('User', userSchema)
 //Middleware
 app.engine('hbs', hbs({ extname: '.hbs'}));
 app.set('view engine', 'hbs');
-app.use(express.static(__dirname + '/puplic'));
+app.use(express.static(path.join(__dirname + '/puplic')));
 app.use(session({
     secret: "REPLACEBALEsecretkey",
     resave: false,
@@ -68,3 +69,7 @@ passport.use(new localStrategy(function (username, password, done) {
 app.get('/', (req, res) => {
     res.render("index", {title: "Home"});
 });
+
+app.listen(3000, () => {
+    console.log("server is running")
+})
