@@ -29,7 +29,7 @@ const user = mongoose.model('User', userSchema)
 //Middleware
 app.engine('hbs', hbs({ extname: '.hbs'}));
 app.set('view engine', 'hbs');
-app.use(express.static(path.join(__dirname + '/puplic')));
+app.use(express.static(path.join(__dirname + '/public')));
 app.use(session({
     secret: "REPLACEBALEsecretkey",
     resave: false,
