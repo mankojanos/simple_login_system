@@ -72,13 +72,58 @@ function isLogedIn(req, res, next) {
     res.redirect("/login");
 }
 
+function isLogedOut(req, res, next) {
+    if(!req.isAuthenticated()) return next();
+    res.redirect("/");
+}
+
 app.get('/', isLogedIn, (req, res) => {
     res.render("index", {title: "Home"});
 });
 
-app.get('/login', (req, res) => {
-    res.render("login", {title: "Login"})
+app.get('/login', isLogedOut, (req, res) => {
+    let response = {
+        title: "Login",
+        error: req.query.error
+    }
+
+    res.render("login", response)
 })
+
+app.post('login', passport.authenticate('local',{
+    successRedirect: '/',
+    failureRedirect: '/login?error=true',
+}));
+
+app.get('/logout', function (req, res) {
+    req.logout();
+    res.redirect('/')
+    });
+
+//Setup admin user
+app.get('/setup', async (req, res) => {
+    const exists = await User.exists( {username: "admin"});
+
+    if(exists) {
+        console.log("exists");
+        res.redirect('/login');
+        return;
+    }
+
+    bcrypt.genSalt(10, function (err, salt) {
+        if (err) return next(err);
+        bcrypt.hash("pass", salt, function (err, hash) {
+            const newAdmin = new User({
+                username: "admin",
+                password: hash
+            });
+
+            newAdmin.save()
+
+            res.redirect('/login');
+        });
+    });
+});
 
 app.listen(3001, () => {
     console.log("server is running")
