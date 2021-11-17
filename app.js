@@ -67,7 +67,12 @@ passport.use(new localStrategy(function (username, password, done) {
 }));
 //ROUTES
 
-app.get('/', (req, res) => {
+function isLogedIn(req, res, next) {
+    if(req.isAuthenticated()) return next();
+    res.redirect("/login");
+}
+
+app.get('/', isLogedIn, (req, res) => {
     res.render("index", {title: "Home"});
 });
 
