@@ -1,6 +1,6 @@
 const express       = require('express');
 const session       = require('express-session');
-const hbs           = require('express3-handlebars');
+const hbs           = require('express-handlebars');
 const mongoose      = require('mongoose');
 const passport      = require('passport');
 const localStrategy = require('passport-local').Strategy;
@@ -65,11 +65,16 @@ passport.use(new localStrategy(function (username, password, done) {
            })
        });
 }));
+//ROUTES
 
 app.get('/', (req, res) => {
     res.render("index", {title: "Home"});
 });
 
-app.listen(3000, () => {
+app.get('/login', (req, res) => {
+    res.render("login", {title: "Login"})
+})
+
+app.listen(3001, () => {
     console.log("server is running")
 })
